@@ -3,7 +3,7 @@
     <head><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"></head>
     <body>
         <div class="container">
-            <h1>Simple image search engine</h1>
+            <h1>Phuong's Simple Image Search</h1>
             <form method="POST" enctype="multipart/form-data">
                 <input type="file" name="query_img"><br>
                 <input type="submit">
@@ -16,7 +16,7 @@
             {% for score in scores %}
             <figure style="float: left; margin-right: 20px; margin-bottom: 20px;">
                 <img src="{{ score[1] }}" height="200px">
-                <figcaption>{{ score[0] }}</figcaption>
+                <figcaption>{{ score[2] }} - {{score[3]}}</figcaption>
             </figure>
             {% endfor %}
         </div>
