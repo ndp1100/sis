@@ -33,10 +33,13 @@ def downloadimg(msp, linkImage):
 
 df = pd.read_excel('AllProduct.xlsx')
 def GetGiaBanFromMSP(msp):
+    print('Search Gia MSP ', msp)
     df_filterMSP = df.loc[df['Mã sản phẩm']==msp, 'Giá bán']
     # print(df_filterMSP.values[0])
-    currency = "{:,.0f} VND".format(df_filterMSP.values[0])
-    print(currency)
+    currency = 0
+    if df_filterMSP.values.size != 0:
+        currency = "{:,.0f} VND".format(df_filterMSP.values[0])
+    # print(currency)
     return currency
 # GetGiaBanFromMSP('TTDB-BJ-0167')
 

@@ -25,9 +25,20 @@ def index():
     if request.method == 'POST':
         file = request.files['query_img']
 
+        print("Checkbox", request.form.get('checkbox'))
+
         # Save query image
         img = Image.open(file.stream)  # PIL image
         uploaded_img_path = "static/uploaded/" + datetime.now().isoformat().replace(":", ".") + "_" + file.filename
+
+        print('before : img width', img.width, 'img height', img.height)
+
+        #rotate img if nessesary
+        if request.form.get('checkbox')=='checked':
+            img = img.rotate(-90)
+
+        print('after : img width', img.width, 'img height', img.height)
+
         img.save(uploaded_img_path)
         
         # Run search
@@ -36,7 +47,7 @@ def index():
         ids = np.argsort(dists)[:30]  # Top 30 results        
         scores = [(dists[id], img_paths[id], MSP[id], GetGiaBanFromMSP(MSP[id])) for id in ids]
 
-        print(scores[1])
+        # print(scores[1])
 
         return render_template('index.html',
                                query_path=uploaded_img_path,

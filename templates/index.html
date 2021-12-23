@@ -1,71 +1,97 @@
 <!doctype html>
 <html>
-    <head>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-        <meta charset="UTF-8">
-            <title>Styling an input type="file" button with CSS</title>
-            <style>
-            /* Put the CSS Style Here */
-            .parent-div {
-            display: inline-block;
-            position: relative;
-            overflow: hidden;
-          }
-          .parent-div input[type=file] {
-            left: 0;
-            top: 0;
-            opacity: 0;
-            position: absolute;
-            font-size: 90px;
-          }
-          .parent-div input[type=submit]{
-            left: 0;
-            top: 0;
-            opacity: 0;
-            position: absolute;
-            font-size: 90px;
-          }
-          .btn-upload {
-            background-color: #fff;
-            border: 3px solid #000;
-            color: #000;
-            padding: 10px 25px;
-            border-radius: 10px;
-            font-size: 22px;
-            font-weight: bold;
-          }
-        </style>
+
+<head>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <meta charset="UTF-8">
+  <title>RoseHome</title>
+  <style>
+    /* Put the CSS Style Here */
+    .parent-div {
+      display: inline-block;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .parent-div input[type=file] {
+      left: 0;
+      top: 0;
+      opacity: 0;
+      position: absolute;
+      font-size: 90px;
+    }
+
+    .parent-div input[type=submit] {
+      left: 0;
+      top: 0;
+      opacity: 0;
+      position: absolute;
+      font-size: 90px;
+    }
+
+    .btn-upload {
+      background-color: #fff;
+      border: 3px solid #000;
+      color: #000;
+      padding: 10px 25px;
+      border-radius: 10px;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    input[type='checkbox'] {
+      width: 30px;
+      height: 30px;
+      border: 2px solid #555;
+    }
+
     
-    
-    </head>
-    <body>
-        <div class="container">
-            <h1>Tìm sản phẩm RoseHome</h1>
-            <form method="POST" enctype="multipart/form-data">
-                <!-- <input type="file" size="60" name="query_img"><br> -->
-                <div class="parent-div">
-                    <button class="btn-upload">Chọn File</button>
-                    <input type="file" name="query_img" />
-               </div>
-               <br>
-                <!-- <input type="submit" size="60"> -->
-                <div class="parent-div">
-                    <button class="btn-upload">Gửi</button>
-                    <input type="submit"/>
-            </form>
-            <h2>Ảnh tìm:</h2>
-            {% if query_path %}
-            <img src="{{ query_path }}" width="300px">
-            {% endif %}
-            <h2>Kết Quả:</h2>
-            {% for score in scores %}
-            <figure style="float: left; margin-right: 20px; margin-bottom: 20px;">
-                <img src="{{ score[1] }}" height="200px">
-                <figcaption>{{ score[2] }} - {{score[3]}}</figcaption>
-            </figure>
-            {% endfor %}
-        </div>
-    </body>
+  </style>
+
+</head>
+
+<body>
+  <div class="container">
+    <h1>Tìm sản phẩm RoseHome</h1>
+
+    <label style="font-size: 20px;">Chụp sản phẩm cố gắng không dính các chi tiết khác ngoài sản phẩm</label>
+
+    <form method="POST" enctype="multipart/form-data">
+      <div class="parent-div">
+        <button class="btn-upload">Chọn File</button>
+        <input type="file" accept="image/*" name="query_img" onchange="loadFile(event)" />
+      </div>
+      <img id="output" width="200" />
+      <br>
+      <label style="font-size: 30px;">Nếu để điện thoại chụp ngang thì bỏ ô xoay ảnh</label><br>
+      <label style="font-size: 30px;">Xoay Ảnh:</label>      
+      <input type="checkbox" name="checkbox" value="checked" checked><br><br>
+      <div class="parent-div">
+        <button class="btn-upload">Gửi</button>
+        <input type="submit" />
+    </form>
+    <h2>Ảnh tìm:</h2>
+    {% if query_path %}
+    <img src="{{ query_path }}" width="300px">
+    {% endif %}
+    <h2>Kết Quả:</h2>
+    {% for score in scores %}
+    <figure style="float: left; margin-right: 20px; margin-bottom: 20px;">
+      <img src="{{ score[1] }}" height="300px">
+      <figcaption>{{ score[2] }} - {{score[3]}}</figcaption>
+    </figure>
+    {% endfor %}
+  </div>
+
+  <script>
+    var loadFile = function (event) {
+      var output = document.getElementById('output');
+      output.src = URL.createObjectURL(event.target.files[0]);
+      output.onload = function () {
+        URL.revokeObjectURL(output.src) // free memory
+      }
+    };
+  </script>
+</body>
+
 </html>
-
-
