@@ -23,7 +23,15 @@ features = np.array(features)
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        file = request.files['query_img']
+        file = request.files['query_img_album']
+        autoRotate = False
+
+        if str.isspace(file.filename) or len(file.filename) <= 0:
+            file = request.files['query_img_camera']
+            autoRotate = True
+
+        if file == None: 
+            return render_template('index.html')
 
         print("Checkbox", request.form.get('checkbox'))
 
@@ -34,8 +42,9 @@ def index():
         print('before : img width', img.width, 'img height', img.height)
 
         #rotate img if nessesary
-        if request.form.get('checkbox')=='checked':
-            img = img.rotate(-90)
+        if autoRotate:
+            if request.form.get('checkbox') == None:
+                img = img.rotate(-90)
 
         print('after : img width', img.width, 'img height', img.height)
 
