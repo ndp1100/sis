@@ -71,7 +71,7 @@
       </div>
 
       <br>
-      <img id="output" width="200" />
+      <img id="output" width="400px" />
       <br>
       <label style="font-size: 30px; color: red;">Nếu để điện thoại chụp ngang thì tích vào ô dưới</label><br>
       <label style="font-size: 30px;">Có chụp ngang điện thoại?</label>      
@@ -86,8 +86,8 @@
     {% endif %}
     <h2>Kết Quả:</h2>
     {% for score in scores %}
-    <figure style="float: left; margin-right: 20px; margin-bottom: 20px;">
-      <img src="{{ score[1] }}" height="300px">
+    <figure style="float: left; margin-right: 20px; margin-bottom: 20px; font-size: 20px;">
+      <img src="{{ score[1] }}" height="400px">
       <figcaption>{{ score[2] }} - {{score[3]}}</figcaption>
     </figure>
     {% endfor %}
