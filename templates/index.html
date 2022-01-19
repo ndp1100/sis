@@ -45,6 +45,12 @@
       border: 2px solid #555;
     }
 
+    .widthHeightSet{
+      max-width: 300px;
+      max-height: 300px;
+    }
+
+    
     
   </style>
 
@@ -87,7 +93,7 @@
     <h2>Kết Quả:</h2>
     {% for score in scores %}
     <figure style="float: left; margin-right: 20px; margin-bottom: 20px; font-size: 20px;">
-      <img src="{{ score[1] }}" height="400px">
+      <img src="{{ score[1] }}" class="widthHeightSet">
       <figcaption>{{ score[2] }} - {{score[3]}}</figcaption>
     </figure>
     {% endfor %}
