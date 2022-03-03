@@ -24,13 +24,13 @@ features = np.array(features)
 def index():
     if request.method == 'POST':
         file = request.files['query_img_album']
-        autoRotate = False
+        auto_rotate = False
 
         if str.isspace(file.filename) or len(file.filename) <= 0:
             file = request.files['query_img_camera']
-            autoRotate = True
+            auto_rotate = True
 
-        if file == None: 
+        if file is None:
             return render_template('index.html')
 
         print("Checkbox", request.form.get('checkbox'))
@@ -41,18 +41,18 @@ def index():
 
         print('before : img width', img.width, 'img height', img.height)
 
-        #rotate img if nessesary
-        if autoRotate:
-            if request.form.get('checkbox') == None:
+        # rotate img if necessary
+        if auto_rotate:
+            if request.form.get('checkbox') is None:
                 img = img.rotate(-90)
 
         print('after : img width', img.width, 'img height', img.height)
 
         img.save(uploaded_img_path)
-        
+
         # Run search
         query = fe.extract(img)
-        dists = np.linalg.norm(features-query, axis=1)  # L2 distances to features
+        dists = np.linalg.norm(features - query, axis=1)  # L2 distances to features
         ids = np.argsort(dists)[:30]  # Top 30 results        
         scores = [(dists[id], img_paths[id], MSP[id], GetGiaBanFromMSP(MSP[id])) for id in ids]
 
@@ -65,5 +65,5 @@ def index():
         return render_template('index.html')
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     app.run("0.0.0.0")
