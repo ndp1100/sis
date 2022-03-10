@@ -91,15 +91,18 @@ def index():
 # accessCode = None
 @app.route('/nhanhvn')
 def get_nhanh_accessCode():
-    # requests.get('https://nhanh.vn/oauth?appId=72301&returnLink=http://103.153.74.38/nhanhvn')
-    args = request.args
-    accessCode = args.get('accessCode')
-    if accessCode is not None:
-        f = open("accessCode_Nhanh.txt", "w")
-        f.write(accessCode)
-        f.close()
-        return accessCode
-    else:
+    res = requests.get('https://nhanh.vn/oauth?appId=72301&returnLink=http://103.153.74.38/nhanhvn')
+    f = open("accessCode_Nhanh.txt", "w")
+    f.write(res.text)
+    f.close()
+    # args = request.args
+    # accessCode = args.get('accessCode')
+    # if accessCode is not None:
+    #     f = open("accessCode_Nhanh.txt", "w")
+    #     f.write(accessCode)
+    #     f.close()
+    #     return accessCode
+    # else:
         return render_template('getaccesscode.html')
 
 if __name__ == "__main__":
