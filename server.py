@@ -5,6 +5,7 @@ from datetime import datetime
 from flask import Flask, request, render_template
 from pathlib import Path
 from ProcessExcelFile import GetGiaBanFromMSP
+import requests
 
 app = Flask(__name__)
 
@@ -19,6 +20,29 @@ for feature_path in Path("./static/feature").glob("*.npy"):
     MSP.append(feature_path.stem)
 features = np.array(features)
 
+# # new logic
+# datas = []
+# def load_all_data():
+#     for feature_path in Path("./static/feature").glob("*.npy"):
+#         dt_dict = {
+#             'feature' : np.load(feature_path),
+#             'msp' : feature_path.stem,
+#             'img_path' : Path("./static/img") / (feature_path.stem + ".jpg")
+#         }
+#         datas.append(dt_dict)
+#
+# load_all_data()
+# print('total data : ', len(datas))
+
+# def get_list_feature_data_from_danh_muc_sp(danhmucsp):
+#     features = []
+#     img_paths = []
+#     MSP = []
+#     for dt_dict in datas:
+#         if dt_dict['msp'] == danhmucsp:
+#             features.append(dt_dict['feature'])
+#             img_paths.append(dt_dict['img_path'])
+#             MSP.append(dt_dict['msp']
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -64,6 +88,16 @@ def index():
     else:
         return render_template('index.html')
 
+# accessCode = None
+@app.route('/nhanhvn')
+def get_nhanh_accessCode():
+    requests.get('https://nhanh.vn/oauth?appId=72301&returnLink=http://103.153.74.38/nhanhvn')
+    args = request.args
+    accessCode = args.get('accessCode')
+    if accessCode is not None:
+        return accessCode
+    else:
+        return render_template('getaccesscode.html')
 
 if __name__ == "__main__":
     app.run("0.0.0.0")
