@@ -9,40 +9,105 @@ import requests
 
 app = Flask(__name__)
 
-# Read image features
 fe = FeatureExtractor()
-features = []
-img_paths = []
-MSP = []
-for feature_path in Path("./static/feature").glob("*.npy"):
-    features.append(np.load(feature_path))
-    img_paths.append(Path("./static/img") / (feature_path.stem + ".jpg"))
-    MSP.append(feature_path.stem)
-features = np.array(features)
+# # Read image features
+# features = []
+# img_paths = []
+# MSP = []
+# for feature_path in Path("./static/feature").glob("*.npy"):
+#     features.append(np.load(feature_path))
+#     img_paths.append(Path("./static/img") / (feature_path.stem + ".jpg"))
+#     MSP.append(feature_path.stem)
+# features = np.array(features)
 
-# # new logic
-# datas = []
-# def load_all_data():
-#     for feature_path in Path("./static/feature").glob("*.npy"):
-#         dt_dict = {
-#             'feature' : np.load(feature_path),
-#             'msp' : feature_path.stem,
-#             'img_path' : Path("./static/img") / (feature_path.stem + ".jpg")
-#         }
-#         datas.append(dt_dict)
-#
-# load_all_data()
-# print('total data : ', len(datas))
+# new logic
+datas = []
 
-# def get_list_feature_data_from_danh_muc_sp(danhmucsp):
-#     features = []
-#     img_paths = []
-#     MSP = []
-#     for dt_dict in datas:
-#         if dt_dict['msp'] == danhmucsp:
-#             features.append(dt_dict['feature'])
-#             img_paths.append(dt_dict['img_path'])
-#             MSP.append(dt_dict['msp']
+
+def load_all_data():
+    for feature_path in Path("./static/feature").glob("*.npy"):
+        maSanPham = feature_path.stem
+        giaSanPham, danhMucSanPham = GetGiaBanFromMSP(maSanPham)
+
+        dt_dict = {
+            'feature': np.load(feature_path),
+            'msp': feature_path.stem,
+            'img_path': Path("./static/img") / (feature_path.stem + ".jpg"),
+            'danhMucSP': danhMucSanPham,
+            'giaSP': giaSanPham
+        }
+        datas.append(dt_dict)
+
+
+load_all_data()
+print('total data : ', len(datas))
+
+tranh_phu_dieu = {'TRANH-PD-TT', 'TRANH-PD-HH', 'TRANH-PD-RE', 'TRANH-TH'}
+tranh_dinh_da = {'TRANH-DD'}
+dong_ho = {'DH-AM', 'DH-DG', 'DH-TB', 'DH-HZ', 'DH-HSG', 'DH-ZQ', 'DH-MV', 'DH-ME', 'DH-WE', 'DH-RE', 'DH-LI'}
+trang_tri_de_ban = {'TTDEBAN'}
+do_gia_dung = {'LYTT', 'XODA', 'HOPKHANGIAY', 'DERUOU', 'BATDIA', 'COCCHEN', 'ONGDUA', 'THAM', 'GATTAN', 'TAMLOTBANAN',
+               'THUNGRAC', 'DUAMUONG', 'KHAYMUT', 'CHAILO', 'GIATREOLY', 'KHAYDIATRAICAY', 'SETPHONGTAM', 'BOGIAVI'}
+tranh_sat = {'DCKIMLOAI', 'DCCOMPOSITE', 'DCGO'}
+kham_trai = {'DGDKT', 'DHKT', 'KTDB', 'KTTT'}
+binh_hoa = {'BINHTRANGTRI'}
+
+
+def get_set_of_madanhmuc(filter: str):
+    if filter == 'tranhphudieu':
+        return tranh_phu_dieu
+    elif filter == 'tranhdinhda':
+        return tranh_dinh_da
+    elif filter == 'dongho':
+        return dong_ho
+    elif filter == 'trangtrideban':
+        return trang_tri_de_ban
+    elif filter == 'dogiadung':
+        return do_gia_dung
+    elif filter == 'tranhsat':
+        return tranh_sat
+    elif filter == 'khamtrai':
+        return kham_trai
+    elif filter == 'binhhoa':
+        return binh_hoa
+    else:
+        return None
+
+
+def get_data_from_danhmucsp(danhmucsp: str, features: list, img_paths: list, MSP: list, giaSP: list):
+    if danhmucsp is not None:
+        for dt_dict in datas:  # get all data
+            if dt_dict['danhMucSP'] == danhmucsp:
+                features.append(dt_dict['feature'])
+                img_paths.append(dt_dict['img_path'])
+                MSP.append(dt_dict['msp'])
+                giaSP.append(dt_dict['giaSP'])
+    else:  # get data in list danh muc san pham
+        for dt_dict in datas:
+            features.append(dt_dict['feature'])
+            img_paths.append(dt_dict['img_path'])
+            MSP.append(dt_dict['msp'])
+            giaSP.append(dt_dict['giaSP'])
+
+
+def get_list_feature_data_from_danh_muc_sp(filter_madanhmuc: str):
+    features = []
+    img_paths = []
+    MSP = []
+    giaSP = []
+
+    if filter_madanhmuc is not None:
+        set_of_madanhmuc = get_set_of_madanhmuc(filter_madanhmuc)
+        for m in set_of_madanhmuc:
+            get_data_from_danhmucsp(m, features, img_paths, MSP, giaSP)
+    else:
+        get_data_from_danhmucsp(None, features, img_paths, MSP, giaSP)
+    return features, img_paths, MSP, giaSP
+
+
+# get_list_feature_data_from_danh_muc_sp('TRANH-DD')
+# print(MSP)
+
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -57,36 +122,39 @@ def index():
         if file is None:
             return render_template('index.html')
 
-        print("Checkbox", request.form.get('checkbox'))
+        # print("Checkbox", request.form.get('checkbox'))
 
         # Save query image
         img = Image.open(file.stream)  # PIL image
         uploaded_img_path = "static/uploaded/" + datetime.now().isoformat().replace(":", ".") + "_" + file.filename
 
-        print('before : img width', img.width, 'img height', img.height)
+        # print('before : img width', img.width, 'img height', img.height)
 
         # rotate img if necessary
         if auto_rotate:
             if request.form.get('checkbox') is None:
                 img = img.rotate(-90)
 
-        print('after : img width', img.width, 'img height', img.height)
+        # print('after : img width', img.width, 'img height', img.height)
 
         img.save(uploaded_img_path)
+
+        # prepare data : feature, msp, img_path
+        danhmucsanphamfilter = request.form.get('danhmucsanpham')
+        features, img_paths, MSP, giaSP = get_list_feature_data_from_danh_muc_sp(danhmucsanphamfilter)
 
         # Run search
         query = fe.extract(img)
         dists = np.linalg.norm(features - query, axis=1)  # L2 distances to features
         ids = np.argsort(dists)[:30]  # Top 30 results        
-        scores = [(dists[id], img_paths[id], MSP[id], GetGiaBanFromMSP(MSP[id])) for id in ids]
-
-        # print(scores[1])
+        scores = [(dists[id], img_paths[id], MSP[id], giaSP[id]) for id in ids]
 
         return render_template('index.html',
                                query_path=uploaded_img_path,
                                scores=scores)
     else:
         return render_template('index.html')
+
 
 # accessCode = None
 @app.route('/nhanhvn', methods=['GET', 'POST'])
@@ -104,6 +172,7 @@ def get_nhanh_accessCode():
         return accessCode
     else:
         return render_template('getaccesscode.html')
+
 
 if __name__ == "__main__":
     app.run("0.0.0.0")

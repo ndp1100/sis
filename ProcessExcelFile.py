@@ -37,17 +37,21 @@ df = pd.read_excel('AllProduct.xlsx')
 
 
 def GetGiaBanFromMSP(msp):
-    print('Search Gia MSP ', msp)
-    df_filterMSP = df.loc[df['Mã sản phẩm'] == msp, 'Giá bán']
-    # print(df_filterMSP.values[0])
+    # print('Search Gia MSP ', msp)
+    df_filterMSP = df.loc[df['Mã sản phẩm'] == msp, ['Giá bán', 'Mã danh mục']]
     currency = 0
+    maDanhMuc = str('None')
     if df_filterMSP.values.size != 0:
-        currency = "{:,.0f} VND".format(df_filterMSP.values[0])
+        currency = "{:,.0f} VND".format(df_filterMSP.iloc[0]['Giá bán'])
+        maDanhMuc = df_filterMSP.iloc[0]['Mã danh mục']
     # print(currency)
-    return currency
 
+    return currency, maDanhMuc
 
-# GetGiaBanFromMSP('TTDB-BJ-0167')
+#
+# tien, ma = GetGiaBanFromMSP('TTDB-BJ-0167')
+# print(tien)
+# print(ma)
 
 excelFiles = glob('*.xlsx', recursive=False)
 

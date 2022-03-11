@@ -2,10 +2,10 @@
 <html>
 
 <head>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <meta charset="UTF-8">
-  <title>RoseHome</title>
-  <style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <meta charset="UTF-8">
+    <title>RoseHome</title>
+    <style>
     /* Put the CSS Style Here */
     .parent-div {
       display: inline-block;
@@ -35,7 +35,7 @@
       color: #000;
       padding: 10px 25px;
       border-radius: 10px;
-      font-size: 30px;
+      font-size: 25px;
       font-weight: bold;
     }
 
@@ -45,6 +45,7 @@
       border: 2px solid #555;
     }
 
+
     .widthHeightSet{
       max-width: 300px;
       max-height: 300px;
@@ -52,39 +53,56 @@
 
     
     
-  </style>
+
+    </style>
 
 </head>
 
 <body>
-  <div class="container">
+<div class="container">
     <h1>Tìm sản phẩm RoseHome</h1>
 
     <label style="font-size: 20px;">Chụp sản phẩm cố gắng không dính các chi tiết khác ngoài sản phẩm</label>
 
     <form method="POST" enctype="multipart/form-data">
-      <div class="parent-div">
-        <!-- <button class="btn-upload">Lấy từ album</button>
-        <input type="file" accept="image/*" name="query_img" onchange="loadFile(event)" />
-        <br> -->
-        <button class="btn-upload">Lấy từ album</button>
-        <input type="file" accept="image/*" name="query_img_album" onchange="loadFile(event)"/>
-      </div>
-      <br>
-      <div class="parent-div">
-        <button class="btn-upload">Chụp Ảnh</button>
-        <input type="file" accept="image/*" name="query_img_camera" capture="camera" onchange="loadFile(event)" />      
-      </div>
+        <div class="parent-div">
+            <!-- <button class="btn-upload">Lấy từ album</button>
+            <input type="file" accept="image/*" name="query_img" onchange="loadFile(event)" />
+            <br> -->
+            <button class="btn-upload">Lấy từ album</button>
+            <input type="file" accept="image/*" name="query_img_album" onchange="loadFile(event)"/>
+        </div>
+        <br>
+        <div class="parent-div">
+            <button class="btn-upload">Chụp Ảnh</button>
+            <input type="file" accept="image/*" name="query_img_camera" capture="camera" onchange="loadFile(event)"/>
+        </div>
 
-      <br>
-      <img id="output" width="400px" />
-      <br>
-      <label style="font-size: 30px; color: red;">Nếu để điện thoại chụp ngang thì tích vào ô dưới</label><br>
-      <label style="font-size: 30px;">Có chụp ngang điện thoại?</label>      
-      <input type="checkbox" name="checkbox" value="xoayngang"><br><br>
-      <div class="parent-div">
-        <button class="btn-upload">Gửi</button>
-        <input type="submit" />
+        <br>
+        <img id="output" width="400px"/>
+        <br>
+        <label style="font-size: 30px; color: red;">Nếu để điện thoại chụp ngang thì tích vào ô dưới</label><br>
+        <label style="font-size: 30px;">Có chụp ngang điện thoại?</label>
+        <input type="checkbox" name="checkbox" value="xoayngang"><br><br>
+        <br>
+        <label style="font-size: 20px;">Chọn danh mục sản phẩm</label>
+        <select id="cars" name="danhmucsanpham" class="btn-upload">
+          <option value="all" selected>Tất cả</option>
+          <option value="tranhphudieu">Tranh Phù Điêu</option>
+          <option value="tranhdinhda">Tranh Đính Đá</option>
+          <option value="dongho">Đồng Hồ</option>
+          <option value="trangtrideban">Trang Trí Để Bàn</option>
+          <option value="dogiadung">Đồ Gia Dụng</option>
+          <option value="tranhsat">Tranh Sắt</option>
+          <option value="khamtrai">Khảm Trai</option>
+          <option value="binhhoa">Bình Hoa</option>
+        </select>
+        <br>
+        <br>
+        <div class="parent-div">
+            <button class="btn-upload">Gửi</button>
+            <input type="submit"/>
+        </div>
     </form>
     <h2>Ảnh tìm:</h2>
     {% if query_path %}
@@ -93,13 +111,13 @@
     <h2>Kết Quả:</h2>
     {% for score in scores %}
     <figure style="float: left; margin-right: 20px; margin-bottom: 20px; font-size: 20px;">
-      <img src="{{ score[1] }}" class="widthHeightSet">
-      <figcaption>{{ score[2] }} - {{score[3]}}</figcaption>
+        <img src="{{ score[1] }}" class="widthHeightSet">
+        <figcaption>{{ score[2] }} - {{score[3]}}</figcaption>
     </figure>
     {% endfor %}
-  </div>
+</div>
 
-  <script>
+<script>
     var loadFile = function (event) {
       var output = document.getElementById('output');
       output.src = URL.createObjectURL(event.target.files[0]);
@@ -107,7 +125,8 @@
         URL.revokeObjectURL(output.src) // free memory
       }
     };
-  </script>
+
+</script>
 </body>
 
 </html>
