@@ -6,19 +6,12 @@ from flask import Flask, request, render_template
 from pathlib import Path
 from ProcessExcelFile import GetGiaBanFromMSP
 import requests
+# import JsonNhanh.SearchProductRes
+import json
 
 app = Flask(__name__)
 
 fe = FeatureExtractor()
-# # Read image features
-# features = []
-# img_paths = []
-# MSP = []
-# for feature_path in Path("./static/feature").glob("*.npy"):
-#     features.append(np.load(feature_path))
-#     img_paths.append(Path("./static/img") / (feature_path.stem + ".jpg"))
-#     MSP.append(feature_path.stem)
-# features = np.array(features)
 
 # new logic
 datas = []
@@ -172,6 +165,24 @@ def get_nhanh_accessCode():
         return accessCode
     else:
         return render_template('getaccesscode.html')
+
+@app.route('/searchnhanh', methods=['GET', 'POST'])
+def search_product_info_nhanh():
+    url = 'https://open.nhanh.vn/api/product/search'
+    myData = {
+        'version' : 2.0,
+        'appId' : 72301,
+        'businessId': 82947,
+        'accessToken': 'QX2tulbNG4b0mnpuaxWHSoCFf4Qu5SEzPYs9RSHz2j159XvaIo8BdAhxWYPR4ZlfUGmNr8ulXvA173b9owjmVc18o1qWqesHCpDqk93mKQOjIkmqga4EirF3gA7hFIi5',
+        'data' : '{"page":1}'
+    }
+    x = requests.post(url, data=myData)
+    # print(x.text)
+    result = json.loads(x.text)
+    print(result)
+    # result = JsonNhanh.SearchProductRes.search_product_res_from_dict(x.text)
+    # print(result.data.products.get('37320029'))
+    return x.text
 
 
 if __name__ == "__main__":
