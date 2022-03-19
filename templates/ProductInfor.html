@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html style="font-size: 16px;">
+<style>
+
+div {
+   padding-left:10%;
+}
+
+table, td, th {
+  border: 1px solid black;
+}
+
+table {
+  border-collapse: collapse;
+  width: 700px;
+}
+
+td {
+  text-align: center;
+}
+
+.widthHeightSet{
+        width: 100%;
+        max-width: 500px;
+        height: auto;
+        max-height: 500px;
+    }
+
+
+</style>
+<body>
+<div>
+    <h1>{{masanpham}} - {{giasanpham}}</h1>
+    <p>Miêu tả sản phẩm: {{mieutasanpham}}</p>
+    <table>
+        <tr>
+            <th>Kho Tổng</th>
+            <th>Nam Kì</th>
+            <th>Bình Thạnh</th>
+            <th>Trần Phú</th>
+            <th>Cần Thơ</th>
+        </tr>
+        <tr>
+            <td>{{depot.khotong}}</td>
+            <td>{{depot.namki}}</td>
+            <td>{{depot.binhthanh}}</td>
+            <td>{{depot.tranphu}}</td>
+            <td>{{depot.cantho}}</td>
+        </tr>
+    </table>
+</div>
+
+<br>
+<br>
+
+<div>
+    <img src="{{imgs}}" class="widthHeightSet">
+</div>
+
+</body>
+</html>

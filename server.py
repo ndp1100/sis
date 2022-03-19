@@ -6,7 +6,7 @@ from flask import Flask, request, render_template
 from pathlib import Path
 from ProcessExcelFile import GetGiaBanFromMSP
 import requests
-# import JsonNhanh.SearchProductRes
+import JsonNhanh.Json_ProductNhanh
 import json
 
 app = Flask(__name__)
@@ -69,14 +69,14 @@ def get_set_of_madanhmuc(filter: str):
 
 def get_data_from_danhmucsp(danhmucsp: str, features: list, img_paths: list, MSP: list, giaSP: list):
     if danhmucsp is not None:
-        for dt_dict in datas:  # get all data
+        for dt_dict in datas:
             if dt_dict['danhMucSP'] == danhmucsp:
                 features.append(dt_dict['feature'])
                 img_paths.append(dt_dict['img_path'])
                 MSP.append(dt_dict['msp'])
                 giaSP.append(dt_dict['giaSP'])
     else:  # get data in list danh muc san pham
-        for dt_dict in datas:
+        for dt_dict in datas: # get all data
             features.append(dt_dict['feature'])
             img_paths.append(dt_dict['img_path'])
             MSP.append(dt_dict['msp'])
@@ -115,20 +115,14 @@ def index():
         if file is None:
             return render_template('index.html')
 
-        # print("Checkbox", request.form.get('checkbox'))
-
         # Save query image
         img = Image.open(file.stream)  # PIL image
         uploaded_img_path = "static/uploaded/" + datetime.now().isoformat().replace(":", ".") + "_" + file.filename
-
-        # print('before : img width', img.width, 'img height', img.height)
 
         # rotate img if necessary
         if auto_rotate:
             if request.form.get('checkbox') is None:
                 img = img.rotate(-90)
-
-        # print('after : img width', img.width, 'img height', img.height)
 
         img.save(uploaded_img_path)
 
@@ -139,12 +133,23 @@ def index():
         # Run search
         query = fe.extract(img)
         dists = np.linalg.norm(features - query, axis=1)  # L2 distances to features
-        ids = np.argsort(dists)[:30]  # Top 30 results        
+        ids = np.argsort(dists)[:15]  # Top 15 results
         scores = [(dists[id], img_paths[id], MSP[id], giaSP[id]) for id in ids]
+
+        # refine data to easy show in html
+        rangeLoop = int(len(scores) / 3)
+        result = []
+        i = 0
+        x = 0
+        while i < rangeLoop:
+            s = [scores[x], scores[x + 1], scores[x + 2]]
+            result.append(s)
+            x = x + 3
+            i = i + 1
 
         return render_template('index.html',
                                query_path=uploaded_img_path,
-                               scores=scores)
+                               scores=result)
     else:
         return render_template('index.html')
 
@@ -183,6 +188,55 @@ def search_product_info_nhanh():
     # result = JsonNhanh.SearchProductRes.search_product_res_from_dict(x.text)
     # print(result.data.products.get('37320029'))
     return x.text
+
+depotName_data = {
+    '82210': 'khotong',
+    '98135': 'binhthanh',
+    '98136': 'namki',
+    '99465': 'cantho',
+    '99466': 'tranphu'
+}
+
+
+def get_name_depot(depotID: str):
+    return depotName_data[depotID]
+
+
+@app.route('/search')
+def productinfor():
+    args = request.args
+    masanpham = args.get('msp')
+    dataValue = '{\"name\":\"' + masanpham + '\"}'
+    url = 'https://open.nhanh.vn/api/product/search'
+    myData = {
+        'version': 2.0,
+        'appId': 72301,
+        'businessId': 82947,
+        'accessToken': 'QX2tulbNG4b0mnpuaxWHSoCFf4Qu5SEzPYs9RSHz2j159XvaIo8BdAhxWYPR4ZlfUGmNr8ulXvA173b9owjmVc18o1qWqesHCpDqk93mKQOjIkmqga4EirF3gA7hFIi5',
+        'data': dataValue
+    }
+    x = requests.post(url, data=myData)
+
+    result = JsonNhanh.Json_ProductNhanh.SearchProductResfromdict(json.loads(x.text))
+    product = None
+    for productID, value in result.data.products.items():
+        product = value
+        depots_data = product.inventory.depots
+        depot = {}
+        for x,y in depotName_data.items():
+            depot.update({y:0})
+
+        for deID, avai in depots_data.items():
+            depot.update({get_name_depot(deID): avai.available})
+            # if avai.available > 0:
+            #     print('Kho ', get_name_depot(deID), ' Con co the ban :', avai.available)
+
+    return render_template('productinfor.html',
+                           masanpham=product.code,
+                           giasanpham="{:,.0f} VND".format(product.price),
+                           mieutasanpham=product.description,
+                           depot=depot,
+                           imgs=product.image)
 
 
 if __name__ == "__main__":

@@ -39,6 +39,12 @@
       font-weight: bold;
     }
 
+    .btn-xemchitiet{
+        border: 1px solid #000;
+        font-size: 15px;
+      font-weight: bold;
+    }
+
     input[type='checkbox'] {
       width: 60px;
       height: 60px;
@@ -47,12 +53,26 @@
 
 
     .widthHeightSet{
-      max-width: 300px;
-      max-height: 300px;
+        width: 100%;
+        max-width: 300px;
+        height: auto;
+        max-height: 400px;
     }
 
-    
-    
+    div.gallery {
+      margin: 10px;
+      border: 1px solid #ccc;
+      float: left;
+      width: 300px;
+    }
+
+    div.gallery img {
+        width: 100%;
+        max-width: 300px;
+        height: auto;
+        max-height: 400px;
+    }
+
 
     </style>
 
@@ -73,29 +93,29 @@
             <input type="file" accept="image/*" name="query_img_album" onchange="loadFile(event)"/>
         </div>
         <br>
-        <div class="parent-div">
+        <!--<div class="parent-div">
             <button class="btn-upload">Chụp Ảnh</button>
             <input type="file" accept="image/*" name="query_img_camera" capture="camera" onchange="loadFile(event)"/>
-        </div>
+        </div>-->
 
+<!--        <br>-->
+        <img id="output" class="widthHeightSet"/>
         <br>
-        <img id="output" width="400px"/>
-        <br>
-        <label style="font-size: 30px; color: red;">Nếu để điện thoại chụp ngang thì tích vào ô dưới</label><br>
+        <!--<label style="font-size: 30px; color: red;">Nếu để điện thoại chụp ngang thì tích vào ô dưới</label><br>
         <label style="font-size: 30px;">Có chụp ngang điện thoại?</label>
         <input type="checkbox" name="checkbox" value="xoayngang"><br><br>
-        <br>
+        <br>-->
         <label style="font-size: 20px;">Chọn danh mục sản phẩm</label>
         <select id="cars" name="danhmucsanpham" class="btn-upload">
-          <option value="all" selected>Tất cả</option>
-          <option value="tranhphudieu">Tranh Phù Điêu</option>
-          <option value="tranhdinhda">Tranh Đính Đá</option>
-          <option value="dongho">Đồng Hồ</option>
-          <option value="trangtrideban">Trang Trí Để Bàn</option>
-          <option value="dogiadung">Đồ Gia Dụng</option>
-          <option value="tranhsat">Tranh Sắt</option>
-          <option value="khamtrai">Khảm Trai</option>
-          <option value="binhhoa">Bình Hoa</option>
+<!--            <option value="all" selected>Tất cả</option>-->
+            <option value="tranhphudieu">Tranh Phù Điêu</option>
+            <option value="tranhdinhda">Tranh Đính Đá</option>
+            <option value="dongho">Đồng Hồ</option>
+            <option value="trangtrideban">Trang Trí Để Bàn</option>
+            <option value="dogiadung">Đồ Gia Dụng</option>
+            <option value="tranhsat">Tranh Sắt</option>
+            <option value="khamtrai">Khảm Trai</option>
+            <option value="binhhoa">Bình Hoa</option>
         </select>
         <br>
         <br>
@@ -106,18 +126,54 @@
     </form>
     <h2>Ảnh tìm:</h2>
     {% if query_path %}
-    <img src="{{ query_path }}" width="300px">
+    <img src="{{ query_path }}" class="widthHeightSet">
     {% endif %}
+
     <h2>Kết Quả:</h2>
-    {% for score in scores %}
-    <figure style="float: left; margin-right: 20px; margin-bottom: 20px; font-size: 20px;">
-        <img src="{{ score[1] }}" class="widthHeightSet">
-        <figcaption>{{ score[2] }} - {{score[3]}}</figcaption>
-    </figure>
-    {% endfor %}
+
+    <!--{% for score in scores %}
+        <figure style="float: left; margin-right: 20px; margin-bottom: 20px; font-size: 20px;">
+            <img src="{{ score[1] }}" class="widthHeightSet">
+            <figcaption>{{ score[2] }} - {{score[3]}}</figcaption>
+        </figure>
+    {% endfor %}-->
+
+    <table>
+        {% for score in scores %}
+        <tr>
+            <td>
+                <div class="gallery">
+                    <img src="{{ score[0][1] }}"><br>
+                    <label>{{ score[0][2] }}</label><br>
+                    <label>{{ score[0][3] }}</label><br>
+                    <button class="btn-xemchitiet" onclick="redirectButton('{{ score[0][2] }}')">Xem Chi Tiết</button>
+                    <br>
+                </div>
+            </td>
+            <td>
+                <div class="gallery">
+                    <img src="{{ score[1][1] }}"><br>
+                    <label>{{ score[1][2] }}</label><br>
+                    <label>{{ score[1][3] }}</label><br>
+                    <button class="btn-xemchitiet" onclick="redirectButton('{{ score[1][2] }}')">Xem Chi Tiết</button>
+                    <br>
+                </div>
+            </td>
+            <td>
+                <div class="gallery">
+                    <img src="{{ score[2][1] }}"><br>
+                    <label>{{ score[2][2] }}</label><br>
+                    <label>{{ score[2][3] }}</label><br>
+                    <button class="btn-xemchitiet" onclick="redirectButton('{{ score[2][2] }}')">Xem Chi Tiết</button>
+                    <br>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
 </div>
 
-<script>
+<script type="text/javascript">
     var loadFile = function (event) {
       var output = document.getElementById('output');
       output.src = URL.createObjectURL(event.target.files[0]);
@@ -126,6 +182,11 @@
       }
     };
 
+var redirectButton = function xemThemButtonClick(msp) {
+<!--  let urlSearch = 'https://google.com/search?q='+ msp;-->
+  let urlSearch = window.location.origin + '/search?msp=' + msp;
+  window.location.href = urlSearch
+}
 </script>
 </body>
 
