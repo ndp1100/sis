@@ -135,7 +135,7 @@ def index():
         # Run search
         query = fe.extract(img)
         dists = np.linalg.norm(features - query, axis=1)  # L2 distances to features
-        ids = np.argsort(dists)[:15]  # Top 15 results
+        ids = np.argsort(dists)[:24]  # Top 24 results
         scores = [(dists[id], img_paths[id], MSP[id], giaSP[id]) for id in ids]
 
         # refine data to easy show in html
