@@ -8,6 +8,8 @@ from ProcessExcelFile import GetGiaBanFromMSP
 import requests
 import JsonNhanh.Json_ProductNhanh
 import json
+import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
 
 app = Flask(__name__)
 
@@ -238,6 +240,20 @@ def productinfor():
                            depot=depot,
                            imgs=product.image)
 
+
+sentry_sdk.init(
+    dsn="https://972fab6ef46c4002908f7be605cafb6d@o1172500.ingest.sentry.io/6267466",
+    integrations=[FlaskIntegration()],
+
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production.
+    traces_sample_rate=1.0
+)
+
+@app.route('/debug-sentry')
+def trigger_error():
+    division_by_zero = 1 / 0
 
 if __name__ == "__main__":
     app.run("0.0.0.0")
