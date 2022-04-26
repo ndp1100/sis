@@ -18,7 +18,6 @@ fe = FeatureExtractor()
 # new logic
 datas = []
 
-
 def load_all_data():
     for feature_path in Path("./static/feature").glob("*.npy"):
         maSanPham = feature_path.stem
