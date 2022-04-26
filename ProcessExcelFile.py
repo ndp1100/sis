@@ -28,6 +28,7 @@ def is_not_blank(s):
 def downloadimg(msp, linkImage):
     if is_not_blank(linkImage):
         if validators.url(linkImage):
+            print('downloading :', linkImage)
             filedownloaded = os.path.join(path, msp + '.jpg')
             urllib.request.urlretrieve(linkImage, filedownloaded)
     return
