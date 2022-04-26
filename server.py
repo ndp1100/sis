@@ -10,10 +10,13 @@ import JsonNhanh.Json_ProductNhanh
 import json
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
+import os
 
 app = Flask(__name__)
 
 fe = FeatureExtractor()
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 # new logic
 datas = []
